@@ -1,46 +1,64 @@
 from tkinter import *
-from pathlib import Path
 from PIL import ImageTk,Image
-from ImageViewerImpl import *
+import os
+from pathlib import Path
 
-#Root
 root = Tk()
-root.title("Image Viewer App")
+root.title('Image Viewer')
 root.iconbitmap(Path(r"C:\Users\Nipun Bhat\Documents\TKApps\IconFiles\Python.ico"))
 
-#Get First Img
-imgViewImpl = CImageViewerImpl()
-curImg = ImageTk.PhotoImage(Image.open(imgViewImpl.curImgPath()))
-imgLabel = Label(image= curImg)
-imgLabel.grid(row="0", column="0", columnspan=3)
-  
-def OnNextButtonClick():
-    global imgLabel  
-    
-    imgLabel.grid_forget()
-    
-    nextImg = ImageTk.PhotoImage(Image.open(imgViewImpl.nextImagePath()))
-    imgLabel = Label(image= nextImg)
-    
-    imgLabel.grid(row="0", column="0", columnspan=3)
-    
-def OnPrevButtonClick():
-    global imgLabel  
-    
-    imgLabel.grid_forget()
-    
-    prevImg = ImageTk.PhotoImage(Image.open(imgViewImpl.prevImagePath()))
-    imgLabel = Label(image= prevImg)
-    
-    imgLabel.grid(row="0", column="0", columnspan=3)
+imgdirPath = Path(r"C:\Users\Nipun Bhat\Documents\TKApps\Images")
+image_list = os.listdir(imgdirPath)
+for indx,path in enumerate(image_list):
+    tempPath = Path.joinpath(imgdirPath, path)
+    image_list[indx] = ImageTk.PhotoImage(Image.open(tempPath))
 
-button_prev = Button(root, text= "<<", command= OnPrevButtonClick)
-button_prev.grid(row = "1", column= "0")
+my_label = Label(image=image_list[0])
+my_label.grid(row=0, column=0, columnspan=3)
 
-button_quit = Button(root, text = "Close", command = root.quit)
-button_quit.grid(row="1", column="1")
+def forward(image_number):
+	global my_label
+	global button_forward
+	global button_back
 
-button_next = Button(root, text = ">>", command=OnNextButtonClick)
-button_next.grid(row = "1", column="2")
+	my_label.grid_forget()
+	my_label = Label(image=image_list[image_number-1])
+	button_forward = Button(root, text=">>", command=lambda: forward(image_number+1))
+	button_back = Button(root, text="<<", command=lambda: back(image_number-1))
+	
+	if image_number == 5:
+		button_forward = Button(root, text=">>", state=DISABLED)
+
+	my_label.grid(row=0, column=0, columnspan=3)
+	button_back.grid(row=1, column=0)
+	button_forward.grid(row=1, column=2)
+
+def back(image_number):
+	global my_label
+	global button_forward
+	global button_back
+
+	my_label.grid_forget()
+	my_label = Label(image=image_list[image_number-1])
+	button_forward = Button(root, text=">>", command=lambda: forward(image_number+1))
+	button_back = Button(root, text="<<", command=lambda: back(image_number-1))
+
+	if image_number == 1:
+		button_back = Button(root, text="<<", state=DISABLED)
+
+	my_label.grid(row=0, column=0, columnspan=3)
+	button_back.grid(row=1, column=0)
+	button_forward.grid(row=1, column=2)
+
+
+
+button_back = Button(root, text="<<", command=back, state=DISABLED)
+button_exit = Button(root, text="Exit Program", command=root.quit)
+button_forward = Button(root, text=">>", command=lambda: forward(2))
+
+
+button_back.grid(row=1, column=0)
+button_exit.grid(row=1, column=1)
+button_forward.grid(row=1, column=2)
 
 root.mainloop()
