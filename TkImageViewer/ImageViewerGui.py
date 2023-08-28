@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 root = Tk()
-root.title('Codemy.com Image Viewer')
+root.title('Image Viewer')
 root.iconbitmap(Path(r"C:\Users\Nipun Bhat\Documents\TKApps\IconFiles\Python.ico"))
 
 imgdirPath = Path(r"C:\Users\Nipun Bhat\Documents\TKApps\Images")
